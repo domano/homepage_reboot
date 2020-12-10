@@ -19,6 +19,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-intl": "^5.10.6",
+    "react-is-visible": "^1.1.1",
     "react-youtube": "^7.13.0",
     "tailwindcss": "^2.0.1"
   },

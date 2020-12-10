@@ -9,29 +9,34 @@ import {
     faLaptopCode,
     faChalkboardTeacher, IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
-import {useVisible} from "./hooks/useVisible";
+import {useRef} from "react";
+import IsVisible from "react-is-visible"
+
 
 function Bubble({text}) {
     return <p className="text-highlight bg-primary rounded-full text-center flex-0 shadow-xl pl-2 pr-2">{text}</p>;
 }
 
 function Skill({text, icon, skills}: { text: string, icon: IconDefinition, skills: Array<string> }) {
-    return <div className="flex flex-col bg-highlight rounded-2xl p-4 border-2 shadow gap-1">
-        <div className="flex flex-row pb-4">
-            <div className="flex items-center justify-center p-2">
-                <FontAwesomeIcon className="text-5xl text-primary"
-                                 icon={icon}/>
+
+    return <IsVisible once>
+        {isVisible => <div
+            className={`${isVisible ? "animate-fadeIn" : "opacity-0"} flex flex-col bg-highlight rounded-2xl p-4 border-2 shadow gap-1`}>
+            <div className="flex flex-row pb-4">
+                <div className="flex items-center justify-center p-2">
+                    <FontAwesomeIcon className="text-5xl text-primary"
+                                     icon={icon}/>
+                </div>
+                <p className="text-primary  text-right justify-center items-center text-3xl">{text}</p>
             </div>
-            <p className="text-primary  text-right justify-center items-center text-3xl">{text}</p>
-        </div>
-        <div className="flex flex-wrap gap-1">
-            {skills.map(skill => <Bubble text={skill}/>)}
-        </div>
-    </div>
+            <div className="flex flex-wrap gap-1">
+                {skills.map(skill => <Bubble text={skill}/>)}
+            </div>
+        </div>}
+    </IsVisible>
 }
 
 function Skills() {
-    const [targetRef, isVisible] = useVisible((vi: number) => vi > 0)
 
     let skills = {
         consulting: ["Lean Innovation", "Requirements Engineering", "MVP", "Validation", "Concept"],
@@ -41,7 +46,7 @@ function Skills() {
             "Reactive Programming", "Functional Programming", "Flutter", "node", "Java", "Spring", "Robot Testing Framework", "Pact", "Bash",],
         trainer: ["Go Basics", "Advanced Go", "Microservices", "Custom Trainings"],
     }
-    return <section className={`flex flex-nowrap justify-evenly gap-1 ${isVisible?"animate-fadeIn":"opacity-0"}`}>
+    return <section className={`flex flex-col justify-evenly gap-1 `}>
         <Skill text="IT-Consultant" icon={faHandsHelping} skills={skills.consulting}/>
         <Skill text="Systems Architect" icon={faProjectDiagram} skills={skills.architect}/>
         <Skill text="Product Owner" icon={faUsers} skills={skills.po}/>
@@ -51,52 +56,70 @@ function Skills() {
 }
 
 function Hero() {
-    const [targetRef, isVisible] = useVisible((vi: number) => vi > 0)
-    return <section className={`hero ${isVisible?"animate-fadeIn":"opacity-0"}`}>
-        <Image
-            src="/dino.jpg"
-            alt="Bild von mir"
-            width={1500}
-            height={1000}
-        />
-        <div
-            className="absolute right-0 top-1/4 p-8 flex flex-col
+    return <IsVisible once>
+        {isVisible => <section className={`${isVisible ? "animate-fadeIn" : "opacity-0"} hero `}>
+            <Image
+                src="/dino.jpg"
+                alt="Bild von mir"
+                width={1500}
+                height={1000}
+            />
+            <div
+                className="absolute right-0 top-1/4 p-8 flex flex-col
             bg-primary-light bg-opacity-50 rounded-l-full border-2
             ">
-            <p className="xl:text-7xl text-5xl p-8 text-center">
-                Hi! <br/>
-                Ich bin Dino.
-            </p>
+                <p className="xl:text-7xl text-5xl p-8 text-center">
+                    Hi! <br/>
+                    Ich bin Dino.
+                </p>
 
-        </div>
-    </section>;
+            </div>
+        </section>}
+    </IsVisible>
 }
+
+let talks = [
+    {id: "tcaPzIXwj8A", filename: "/talks/kafka_go.svg"},
+    {id: "jKbIDyxQmOU", filename: "/talks/microservices.svg"},
+    {id: "mGv79zsJ1K8", filename: "/talks/database_bottleneck.svg"},
+    {id: "BRdRm3wwvjs", filename: "/talks/why_go.svg"},
+    {id: "DsQgf6rgS_s", filename: "/talks/reactive_go.svg"},
+    {id: "g-xWLYgeJ-M", filename: "/talks/serverless_go.svg"},
+]
 
 function Talks() {
-    const [targetRef, isVisible] = useVisible((vi: number) => vi > 0)
-    // @ts-ignore
-    return <section ref={targetRef} className={`grid gap-1 sm:grid-cols-1 xl:grid-cols-2 justify-items-center justify-evenly ${isVisible?"animate-fadeIn":"opacity-0"}`}>
-        <Talk id={"tcaPzIXwj8A"} filename={"/talks/kafka_go.svg"}/>
-        <Talk id={"jKbIDyxQmOU"} filename={"/talks/microservices.svg"}/>
-        <Talk id={"mGv79zsJ1K8"} filename={"/talks/database_bottleneck.svg"}/>
-        <Talk id={"BRdRm3wwvjs"} filename={"/talks/why_go.svg"}/>
-        <Talk id={"DsQgf6rgS_s"} filename={"/talks/reactive_go.svg"}/>
-        <Talk id={"g-xWLYgeJ-M"} filename={"/talks/serverless_go.svg"}/>
+
+    return <section className={`grid gap-1 sm:grid-cols-1 xl:grid-cols-2 justify-items-center justify-evenly`}>
+        {talks.map(talk => {
+            return <Talk key={talk.id} id={talk.id} filename={talk.filename}/>
+
+        })}
     </section>;
 }
 
-function Talk({id, filename}:{id: string, filename: string}) {
-    return <a className="p-4 mx-auto transition duration-500 ease-in-out bg-highlight hover:bg-primary" href={`https://www.youtube.com/watch?v=${id}`}>
-        <Image className="hover" src={filename} width={640} height={360}/>
-    </a>
+function Talk({id, filename}: { id: string, filename: string }) {
+    return <IsVisible once>
+        {isVisible => <a
+            className={`${isVisible ? "animate-fadeIn" : "opacity-0"} p-4 mx-auto transition duration-500 ease-in-out bg-highlight hover:bg-primary`}
+            href={`https://www.youtube.com/watch?v=${id}`}>
+            <Image className="hover" src={filename} width={640} height={360}/>
+        </a>}
+    </IsVisible>
 }
 
 export default function Home() {
     return (
+        // TODO: Fix layout
+        <div>
+            <nav className={`flex flex-row h-10`}>
+                    <Image className={"flex-none container h-16 w-16"} src={"/favicon.ico"} height={32} width={32}/>
+                    <p className={"flex-none h-16 w-16"}>gomano.de</p>
+            </nav>
         <div className={`flex flex-col bg-pr`}>
             <Hero/>
             <Skills/>
             <Talks/>
+        </div>
         </div>
     )
 }
